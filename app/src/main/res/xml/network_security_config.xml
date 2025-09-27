@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Replace with the actual IP of your access point -->
+        <domain includeSubdomains="true">192.168.50.1</domain>
+        <!-- Example: <domain includeSubdomains="true">192.168.1.1</domain> -->
+        <!-- You can add more <domain> tags for other local IPs if needed -->
+    </domain-config>
+
+    <!--
+    It's generally good practice to default to secure connections for other domains.
+    If you only intend to connect to your local device via HTTP and all other
+    connections should be HTTPS, you might add:
+    <base-config cleartextTrafficPermitted="false" />
+    However, if you are also calling google.com (which uses HTTPS),
+    this base-config is fine as HTTPS is always permitted by default.
+    The domain-config above specifically enables HTTP for your local device.
+    -->
+</network-security-config>
