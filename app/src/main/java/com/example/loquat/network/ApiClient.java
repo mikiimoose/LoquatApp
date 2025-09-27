@@ -17,6 +17,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.RequestBody;
+import okhttp3.MediaType;
 import android.content.Context;
 
 public class ApiClient {
@@ -196,6 +198,55 @@ public class ApiClient {
             Log.e(TAG, "Exception getting IP Address", e);
             return null;
         }
+    }
+
+    public void postDataToLocalServer(
+            String serverIp,
+            int serverPort,
+            String commandPath,
+            String jsonPayload,
+            ApiResponseListener listener) {
+
+        new Thread(() -> {
+            try {
+                HttpUrl url = new HttpUrl.Builder()
+                        .scheme("http")
+                        .host(serverIp)
+                        .port(serverPort)
+                        .addPathSegment(commandPath)
+                        .build();
+
+                MediaType JSON = MediaType.get("application/json; charset=utf-g");
+                RequestBody body = RequestBody.create(jsonPayload, JSON);
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+
+                Log.d("ApiClient", "Requesting Local Server URL (POST): " + request.url());
+                Log.d("ApiClient", "POST Payload: " + jsonPayload);
+
+                try (Response response = client.newCall(request).execute()) {
+                    String responseBody = response.body().string();
+                    if (response.isSuccessful()) {
+                        if (listener != null) {
+                            listener.onSuccess(responseBody);
+                        }
+                    } else {
+                        String errorMsg = "Error Code: " + response.code() + ", Body: " + responseBody;
+                        if (listener != null) {
+                            listener.onError(errorMsg);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("ApiClient", "Exception in postDataToLocalServer", e);
+                if (listener != null) {
+                    listener.onError("Network call failed: " + e.getMessage());
+                }
+            }
+        }).start();
     }
 }
 

@@ -8,37 +8,74 @@
 
     <TextView
         android:id="@+id/textViewSubmitInfo"
-        android:layout_width="300dp"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginTop="64dp"
-        android:text="Loquat must be in setup mode. Please input chatgpt API key below"
+        android:text="Enter your AI provider details below. Loquat must be in setup mode."
         android:textSize="18sp"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/editTextData"
+    <!-- ADDED: TextInputLayout for the API Key -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutApiKey"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:hint="Enter some data"
-        android:inputType="text"
+        android:hint="API Key"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewSubmitInfo" />
+        app:layout_constraintTop_toBottomOf="@id/textViewSubmitInfo">
+
+        <!-- MODIFIED: Changed from EditText to TextInputEditText and gave it the correct ID -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- ADDED: TextInputLayout for the AI Server -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutAiServer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:hint="AI Server"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutApiKey">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextAiServer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:text="chatgpt"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <Button
-        android:id="@+id/buttonSubmit"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonSaveApiKey"        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="172dp"
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextData" />
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutAiServer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

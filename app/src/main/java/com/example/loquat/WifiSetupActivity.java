@@ -282,8 +282,59 @@ public class WifiSetupActivity extends AppCompatActivity {
             return;
         }
 
+        if (apiClient == null) {
+            apiClient = new ApiClient();
+        }
+
+        // 1. Create a JSON format for the three parameters
+        JSONObject wifiCredentials = new JSONObject();
+        try {
+            wifiCredentials.put("ssid", ssid);
+            // If the security is empty, then the JSON security item is "Open"
+            wifiCredentials.put("security", security.isEmpty() ? "Open" : security);
+            // key name is psk for password
+            wifiCredentials.put("psk", password);
+        } catch (JSONException e) {
+            Log.e(TAG_MAIN, "Error creating JSON for Wi-Fi credentials", e);
+            Toast.makeText(this, "Internal error creating request.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String jsonPayload = wifiCredentials.toString();
+        String command = "connect"; // 3. The request name is "connect"
+
         textViewWifiStatus.setText("Attempting to connect to " + ssid);
-        Toast.makeText(this, "Attempting to connect to " + ssid, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Sending connection request for " + ssid, Toast.LENGTH_LONG).show();
+        Log.d(TAG_MAIN, "Sending POST request to " + command + " with payload: " + jsonPayload);
+
+        // 2. Use a POST request to send it to the server
+        apiClient.postDataToLocalServer(
+                SERVER_IP_ADDRESS,
+                SERVER_PORT,
+                command, // The path segment for the request
+                jsonPayload, // The JSON string as the request body
+                new ApiClient.ApiResponseListener() {
+                    @Override
+                    public void onSuccess(String responseBody) {
+                        runOnUiThread(() -> {
+                            Log.d(TAG_MAIN, "Connection request successful: " + responseBody);
+                            Toast.makeText(WifiSetupActivity.this, "Connection request sent successfully!", Toast.LENGTH_SHORT).show();
+                            // The periodic status update will eventually show the new status.
+                            // You can also trigger an immediate update if you want.
+                            updateWifiStatus();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Log.e(TAG_MAIN, "Connection request failed: " + error);
+                            Toast.makeText(WifiSetupActivity.this, "Connection request failed: " + error, Toast.LENGTH_LONG).show();
+                            textViewWifiStatus.setText("Failed to send connection request.");
+                        });
+                    }
+                }
+        );
 
 
     }
